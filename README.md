@@ -54,7 +54,7 @@ All assets used are free and available in the Unity Asset Store or open sources:
 
 1. Clone or download this file.
 2. Open the project in Unity **2023.2.5f1 or later**.
-3. Open `Scenes/MainScene.unity`.
+3. Open `Scenes/Sample Scene.unity`.
 4. Press **Play**.
 
 ---
