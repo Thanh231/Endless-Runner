@@ -4,6 +4,8 @@ using TMPro;
 public class DistanceScore : MonoBehaviour
 {
     public Transform player;
+    public PlayerHealthSystem playerHealthSystem;
+
     public TextMeshProUGUI scoreText;
     public TextMeshProUGUI highScoreText;
     public GameObject highScoreGO;
@@ -45,7 +47,8 @@ public class DistanceScore : MonoBehaviour
             highScore = score;
             PlayerPrefs.SetFloat("HighScore", highScore);
             PlayerPrefs.Save();
-            YouAreHighScore.SetActive(true);
+            if(playerHealthSystem.currentLive <= 0)
+                YouAreHighScore.SetActive(true);
         }
         else
         {

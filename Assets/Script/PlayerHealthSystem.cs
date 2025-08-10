@@ -10,7 +10,7 @@ public class PlayerHealthSystem : MonoBehaviour
     public Animator animator;
     private int currentHealth;
     public int currentLive;
-    public int maxiLive = 3;
+    public int maxLive = 3;
     public GameObject liveUI;
 
     public TextMeshProUGUI liveText;
@@ -18,7 +18,7 @@ public class PlayerHealthSystem : MonoBehaviour
     private void OnEnable()
     {
         EventManager.OnStartGame += SetHPBar;
-        currentLive = maxiLive;
+        currentLive = maxLive;
         SetHPBar();
     }
 
@@ -47,7 +47,7 @@ public class PlayerHealthSystem : MonoBehaviour
             }
             else
             {
-                currentLive = maxiLive;
+                currentLive = maxLive;
                 EventManager.OnGameOver?.Invoke();
             }
             liveUI.SetActive(false);
