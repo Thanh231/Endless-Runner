@@ -7,6 +7,7 @@ public class DistanceScore : MonoBehaviour
     public TextMeshProUGUI scoreText;
     public TextMeshProUGUI highScoreText;
     public GameObject highScoreGO;
+    public GameObject YouAreHighScore;
 
     private Vector3 startPos;
     private float score;
@@ -44,6 +45,11 @@ public class DistanceScore : MonoBehaviour
             highScore = score;
             PlayerPrefs.SetFloat("HighScore", highScore);
             PlayerPrefs.Save();
+            YouAreHighScore.SetActive(true);
+        }
+        else
+        {
+            YouAreHighScore.SetActive(false);
         }
 
         if (isShow)

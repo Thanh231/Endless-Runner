@@ -46,7 +46,9 @@ public class UIManager : Singleton<UIManager>
 
     public void ShowGameOver()
     {
-        StartCoroutine(DelayDisplayGameOverDialog("YOU LOSE", "RESTART",true));
+        dialog?.GetComponent<MenuDialog>().DisplayDialog("YOU LOSE", "RESTART",true);
+        dialog?.SetActive(true);
+        Time.timeScale = 0f;
     }
 
     IEnumerator DelayDisplayGameOverDialog(string title,string buttonText,bool isShow = false)
