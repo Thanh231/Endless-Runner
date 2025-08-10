@@ -8,9 +8,13 @@ public class PlayerHealthSystem : MonoBehaviour
     public int maxHealth = 100;
     public Animator animator;
     private int currentHealth;
+    public int currentLive;
+    public int maxiLive = 3;
     private void OnEnable()
     {
         EventManager.OnStartGame += SetHPBar;
+        currentLive = maxiLive;
+        SetHPBar();
     }
 
     private void SetHPBar()
@@ -29,7 +33,14 @@ public class PlayerHealthSystem : MonoBehaviour
         {
             animator.SetBool("Game Over", true);
             AudioController.Ins.PlaySound(AudioController.Ins.playerDeath, AudioController.Ins.sfxAus);
-            EventManager.OnPlayerDied?.Invoke();
+            currentLive--;
+            if (currentLive > 0)
+                EventManager.OnPlayerDied?.Invoke();
+            else
+            {
+                currentLive = maxiLive;
+                EventManager.OnGameOver?.Invoke();
+            }
         }
     }
     

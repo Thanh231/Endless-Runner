@@ -1,20 +1,35 @@
+using System;
 using UnityEngine;
 
 public class Player : MonoBehaviour
 {
     public float speedTranslate = 5f;
+    public Vector3 defaultPlayerPosition = Vector3.zero;
     
     public bool isPlaying = false;
 
     private void OnEnable()
     {
         EventManager.OnStartGame += OnPlayGame;
-        EventManager.OnPlayerDied += OnEndGame;
+        EventManager.OnPlayerDied += OnPlayerDied;
+        EventManager.OnGameOver += OnEndGame;
     }
     void OnDisable()
     {
         EventManager.OnStartGame -= OnPlayGame;
-        EventManager.OnPlayerDied -= OnEndGame;
+        EventManager.OnPlayerDied -= OnPlayerDied;
+        EventManager.OnGameOver -= OnEndGame;
+    }
+
+    private void OnEndGame()
+    {
+        transform.position = defaultPlayerPosition;
+        isPlaying = false;
+    }
+
+    void Start()
+    {
+        defaultPlayerPosition = transform.position;
     }
 
     private void OnPlayGame()
@@ -22,7 +37,7 @@ public class Player : MonoBehaviour
         isPlaying = true;
     }
 
-    private void OnEndGame()
+    private void OnPlayerDied()
     {
         isPlaying = false;
     }

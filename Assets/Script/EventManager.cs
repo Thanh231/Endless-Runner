@@ -17,6 +17,11 @@ public class EventManager : Singleton<EventManager>
     /// Triggered when the player dies (e.g., health reaches 0).
     /// </summary>
     public static Action OnPlayerDied;
+
+    /// <summary>
+    /// Triggered when the player dies (e.g., health reaches 0).
+    /// </summary>
+    public static Action OnGameOver;
     
         /// <summary>
     /// Triggered when the player's ammo changes.
@@ -30,4 +35,5 @@ public class EventManager : Singleton<EventManager>
     /// Triggered when the player reloads their weapon.
     /// </summary>
     public static Action OnReloaded;
+    public static Action<string> ShowUI;
 }

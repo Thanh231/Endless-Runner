@@ -106,6 +106,7 @@
     <Compile Include="Assets\Script\Controller.cs" />
     <Compile Include="Assets\Script\DifficultyManager.cs" />
     <Compile Include="Assets\External Asset\TextMesh Pro\Examples &amp; Extras\Scripts\Benchmark01.cs" />
+    <Compile Include="Assets\Script\DistanceScore.cs" />
     <Compile Include="Assets\Script\Util\Singleton.cs" />
     <Compile Include="Assets\External Asset\TextMesh Pro\Examples &amp; Extras\Scripts\TextMeshProFloatingText.cs" />
     <Compile Include="Assets\Script\Obstacle.cs" />

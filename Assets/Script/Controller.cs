@@ -4,7 +4,7 @@ using UnityEngine;
 public class Controller : MonoBehaviour
 {
     [SerializeField] Player player;
-    public PlayerInput input; // gán từ Inspector
+    public PlayerInput input;
     [SerializeField] float jumpSpace = 1f;
     [SerializeField] float animationExitTime = 0.6f;
     [SerializeField] GameObject gunObject;

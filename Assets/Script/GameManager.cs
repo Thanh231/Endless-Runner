@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using UnityEngine;
 
@@ -5,8 +6,9 @@ public enum GameState
 {
     Init,
     StartGame,
-    
+
     PauseGame,
+    GameOver
 }
 
 public class GameManager : Singleton<GameManager>
@@ -16,15 +18,22 @@ public class GameManager : Singleton<GameManager>
     {
         currentState = GameState.Init;
         Time.timeScale = 0f;
-        EventManager.OnPlayerDied += GameOver;
+        EventManager.OnPlayerDied += PlayerDied;
+        EventManager.OnGameOver += ResetGame;
+    }
+
+    private void ResetGame()
+    {
+        currentState = GameState.GameOver;
+        UIManager.Ins.ShowGameOver();
     }
 
     private void OnDisable()
     {
-        EventManager.OnPlayerDied -= GameOver;
+        EventManager.OnPlayerDied -= PlayerDied;
     }
 
-    void GameOver()
+    void PlayerDied()
     {
         currentState = GameState.PauseGame;
         UIManager.Ins.ShowGameOver();
@@ -38,7 +47,7 @@ public class GameManager : Singleton<GameManager>
 
     private IEnumerator DelayStartGame()
     {
-        yield return new WaitForSeconds(1f);
+        yield return new WaitForSeconds(0.3f);
         currentState = GameState.StartGame;
         EventManager.OnStartGame?.Invoke();
     }

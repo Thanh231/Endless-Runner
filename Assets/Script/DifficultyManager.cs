@@ -7,13 +7,18 @@ public class DifficultyManager : MonoBehaviour
     public Player player;
     public float timeToIncrease = 10f;
     public float speedIncrease = 1f;
+    public float currentSpeed = 1f;
     public float maxSpeed = 11f;
     private float timer = 0f;
-    [SerializeField] private TextMeshProUGUI speedText;
 
     private void Start()
     {
-        UpdateSpeedText();
+        // UpdateSpeedText();
+        currentSpeed = speedIncrease;
+    }
+    private void OnEnable()
+    {
+        EventManager.OnGameOver += OnResetGame;
     }
 
     void Update()
@@ -22,7 +27,7 @@ public class DifficultyManager : MonoBehaviour
         if (timer >= timeToIncrease && player.speedTranslate <= maxSpeed)
         {
             player.speedTranslate += speedIncrease;
-            UpdateSpeedText();
+            // UpdateSpeedText();
             timer = 0f;
         }
         if (player.speedTranslate == 11f)
@@ -31,7 +36,9 @@ public class DifficultyManager : MonoBehaviour
         }
     }
 
-    void UpdateSpeedText() {
-    speedText.text = "SPEED: " + player.speedTranslate.ToString("F1");
-}
+    public void OnResetGame()
+    {
+        currentSpeed = speedIncrease;
+        player.speedTranslate = speedIncrease;
+    }
 }

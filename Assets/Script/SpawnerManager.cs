@@ -21,25 +21,22 @@ public class SpawnerManager : Singleton<SpawnerManager>
     public float spawnLaneRate = 2f;
     private float timerSpawnObstacle = 0f;
     private float timerSpawnLane = 0f;
-    private int numberOfObstacle = 3;
     private int amountObstacle = 10;
     private int numberOfLane = 3;
     public Vector3 firstLanePos;
     private Vector3 lastLanePos;
     public bool isLevelUp = false;
+    public bool isEndGame = false;
 
     private void Awake()
     {
-        InitPool(smallObstaclePool, smallObstaclePrefabs, amountObstacle);
-        InitPool(doubleObstaclePool, doubleObstaclePrefabs, amountObstacle);
-        InitPool(bigObstaclePool, bigObstaclePrefabs, amountObstacle);
-        // for (int i = 0; i < numberOfObstacle; i++)
-        // {
+        InitPool(smallObstaclePool, smallObstaclePrefabs, amountObstacle, "Parent Small Game Object");
+        InitPool(doubleObstaclePool, doubleObstaclePrefabs, amountObstacle, "Parent Double Game Object");
+        InitPool(bigObstaclePool, bigObstaclePrefabs, amountObstacle, "Parent Big Game Object");
 
-        // }
-        GameObject sandLane = new GameObject("sandLane");
+        GameObject sandLane = new GameObject("sandLanes");
         sandLane.transform.position = Vector3.zero;
-        GameObject rockLane = new GameObject("rockLane");
+        GameObject rockLane = new GameObject("rockLanes");
         rockLane.transform.position = Vector3.zero;
         for (int i = 0; i < numberOfLane; i++)
         {
@@ -48,14 +45,54 @@ public class SpawnerManager : Singleton<SpawnerManager>
         }
         GameObject firstLane = sandLanePool.Pop();
         firstLane.transform.position = firstLanePos;
-        // GameObject firstLane = Instantiate(sandLanePrefabs);
-        // firstLane.transform.position = firstLanePos;
         lastLanePos = firstLanePos;
 
+        EventManager.OnGameOver += ResetGame;
+        EventManager.OnStartGame += StartGame;
+    }
+
+    private void StartGame()
+    {
+        isEndGame = false;
+    }
+
+    public void ResetGame()
+    {
+        ResetObjectPooling("Parent Small Game Object", smallObstaclePool);
+        ResetObjectPooling("Parent Double Game Object", doubleObstaclePool);
+        ResetObjectPooling("Parent Big Game Object", bigObstaclePool);
+        ResetObjectPooling("sandLanes", sandLanePool);
+        ResetObjectPooling("rockLanes", rockLanePool);
+        isLevelUp = false;
+
+        GameObject firstLane = sandLanePool.Pop();
+        firstLane.transform.position = firstLanePos;
+        lastLanePos = firstLanePos;
+        lastSpawnPosition = Vector3.zero;
+        timerSpawnObstacle = 0f;
+        timerSpawnLane = 0f;
+
+        isEndGame = true;
+    }
+
+    private void ResetObjectPooling(string ParentName, Stack<GameObject> pool)
+    {
+        GameObject parentObject = GameObject.Find(ParentName);
+        foreach (Transform child in parentObject.transform)
+        {
+            if (!pool.Contains(child.gameObject))
+            {
+                pool.Push(child.gameObject);
+                child.position = defaultSpawnPosition;
+                child.transform.rotation = Quaternion.identity;
+            }
+        }
     }
 
     void Update()
     {
+        if (isEndGame) return;
+
         timerSpawnObstacle += Time.deltaTime;
         timerSpawnLane += Time.deltaTime;
         if (timerSpawnObstacle >= spawnObstacleRate)
@@ -71,9 +108,9 @@ public class SpawnerManager : Singleton<SpawnerManager>
         }
     }
 
-    void InitPool(Stack<GameObject> pool, GameObject prefab, int amount)
+    void InitPool(Stack<GameObject> pool, GameObject prefab, int amount,string gameObjectName)
     {
-        GameObject obstacleParent = new GameObject("ParentObstacle 1");
+        GameObject obstacleParent = new GameObject(gameObjectName);
         obstacleParent.transform.position = Vector3.zero;
         for (int i = 0; i < amount; i++)
         {
@@ -104,8 +141,6 @@ public class SpawnerManager : Singleton<SpawnerManager>
                 lane.transform.position = new Vector3(firstLanePos.x, firstLanePos.y, lastLanePos.z);
             }
         }
-        // GameObject lane = Instantiate(sandLanePrefabs);
-
     }
     void SpawnObstacle()
     {
