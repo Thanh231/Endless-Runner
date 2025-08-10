@@ -4,7 +4,7 @@ public class EventManager : Singleton<EventManager>
 {
     // Triggered when click on Start or Retry btn
     public static Action OnStartGame;
-    
+
     /// <summary>
     /// Triggered when the player's health changes.
     /// Parameters:
@@ -22,8 +22,8 @@ public class EventManager : Singleton<EventManager>
     /// Triggered when the player dies (e.g., health reaches 0).
     /// </summary>
     public static Action OnGameOver;
-    
-        /// <summary>
+
+    /// <summary>
     /// Triggered when the player's ammo changes.
     /// Parameters:
     /// - int currentAmmo: The player's current ammo count.

@@ -380,7 +380,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 07607cea99f658a47af6310d704f90e3, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  maxHealth: 20
+  maxHealth: 100
   animator: {fileID: 722214935}
   currentLive: 0
   maxLive: 3

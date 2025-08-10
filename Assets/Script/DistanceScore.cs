@@ -4,19 +4,17 @@ using TMPro;
 public class DistanceScore : MonoBehaviour
 {
     public Transform player;
-    public PlayerHealthSystem playerHealthSystem;
-
     public TextMeshProUGUI scoreText;
     public TextMeshProUGUI highScoreText;
     public GameObject highScoreGO;
-    public GameObject YouAreHighScore;
 
     private Vector3 startPos;
-    private float score;
-    private float highScore;
+    public float score;
+    public float highScore;
 
     void Start()
     {
+        PlayerPrefs.SetFloat("HighScore", 0);
         if (player != null)
             startPos = player.position;
 
@@ -25,7 +23,7 @@ public class DistanceScore : MonoBehaviour
         if (highScoreText != null)
             highScoreText.text = "High Score: " + Mathf.FloorToInt(highScore) + "m";
 
-        EventManager.ShowHighScore += ShowHigScore;
+        EventManager.ShowHighScore += ShowHighScore;
     }
 
     void Update()
@@ -36,24 +34,19 @@ public class DistanceScore : MonoBehaviour
             score = Mathf.Max(0, score);
 
             if (scoreText != null)
-                scoreText.text = "Score: " + Mathf.FloorToInt(score) +"m";
+                scoreText.text = "Score: " + Mathf.FloorToInt(score) + "m";
         }
     }
 
-    public void ShowHigScore(bool isShow = false)
+    public void ShowHighScore(bool isShow = false)
     {
         if (score > highScore)
         {
             highScore = score;
             PlayerPrefs.SetFloat("HighScore", highScore);
             PlayerPrefs.Save();
-            if(playerHealthSystem.currentLive <= 0)
-                YouAreHighScore.SetActive(true);
         }
-        else
-        {
-            YouAreHighScore.SetActive(false);
-        }
+
 
         if (isShow)
         {

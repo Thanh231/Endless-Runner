@@ -5,16 +5,16 @@ using UnityEngine;
 
 public class PlayerHealthSystem : MonoBehaviour
 {
-    
+
     public int maxHealth = 100;
     public Animator animator;
     private int currentHealth;
     public int currentLive;
     public int maxLive = 3;
     public GameObject liveUI;
-
     public TextMeshProUGUI liveText;
 
+    public DistanceScore score;
     private void OnEnable()
     {
         EventManager.OnStartGame += SetHPBar;
@@ -28,7 +28,7 @@ public class PlayerHealthSystem : MonoBehaviour
         liveText.text = "Live:" + currentLive.ToString();
         animator.SetBool("Game Over", false);
         currentHealth = maxHealth;
-        EventManager.OnHealthChanged?.Invoke(currentHealth,maxHealth);
+        EventManager.OnHealthChanged?.Invoke(currentHealth, maxHealth);
     }
 
     public void TakeDamage(int amount)
@@ -44,6 +44,7 @@ public class PlayerHealthSystem : MonoBehaviour
             if (currentLive > 0)
             {
                 EventManager.OnPlayerDied?.Invoke();
+
             }
             else
             {
@@ -54,5 +55,5 @@ public class PlayerHealthSystem : MonoBehaviour
 
         }
     }
-    
+
 }
