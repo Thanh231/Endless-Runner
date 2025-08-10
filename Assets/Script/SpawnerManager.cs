@@ -17,54 +17,67 @@ public class SpawnerManager : Singleton<SpawnerManager>
     private Vector3 lastSpawnPosition = Vector3.zero;
     private Vector3 defaultSpawnPosition = new Vector3(0, -10f, 0);
     public float spawnZ = 15f;
-    public float spawnRate = 2f;
-    private float timer = 0f;
-    private int numberOfObstacle = 10;
+    public float spawnObstacleRate = 1f;
+    public float spawnLaneRate = 2f;
+    private float timerSpawnObstacle = 0f;
+    private float timerSpawnLane = 0f;
+    private int numberOfObstacle = 3;
+    private int amountObstacle = 10;
     private int numberOfLane = 3;
     public Vector3 firstLanePos;
-    public Vector3 lastLanePos;
+    private Vector3 lastLanePos;
+    public bool isLevelUp = false;
 
     private void Awake()
     {
-        for (int i = 0; i < numberOfObstacle; i++)
-        {
-            InitPool(smallObstaclePool, smallObstaclePrefabs, numberOfObstacle);
-            InitPool(doubleObstaclePool, doubleObstaclePrefabs, numberOfObstacle);
-            InitPool(bigObstaclePool, bigObstaclePrefabs, numberOfObstacle);
-        }
-        // for (int i = 0; i < numberOfLane; i++)
+        InitPool(smallObstaclePool, smallObstaclePrefabs, amountObstacle);
+        InitPool(doubleObstaclePool, doubleObstaclePrefabs, amountObstacle);
+        InitPool(bigObstaclePool, bigObstaclePrefabs, amountObstacle);
+        // for (int i = 0; i < numberOfObstacle; i++)
         // {
-        //     sandLanePool.Push(Instantiate(sandLanePrefabs, defaultSpawnPosition, Quaternion.identity));
-        //     rockLanePool.Push(Instantiate(rockLanePrefabs, defaultSpawnPosition, Quaternion.identity));
+
         // }
-        // GameObject firstLane = sandLanePool.Pop();
-        // firstLane.transform.position = firstLanePos;
-        GameObject firstLane = Instantiate(sandLanePrefabs);
+        GameObject sandLane = new GameObject("sandLane");
+        sandLane.transform.position = Vector3.zero;
+        GameObject rockLane = new GameObject("rockLane");
+        rockLane.transform.position = Vector3.zero;
+        for (int i = 0; i < numberOfLane; i++)
+        {
+            sandLanePool.Push(Instantiate(sandLanePrefabs, defaultSpawnPosition, Quaternion.identity, sandLane.transform));
+            rockLanePool.Push(Instantiate(rockLanePrefabs, defaultSpawnPosition, Quaternion.identity, rockLane.transform));
+        }
+        GameObject firstLane = sandLanePool.Pop();
         firstLane.transform.position = firstLanePos;
+        // GameObject firstLane = Instantiate(sandLanePrefabs);
+        // firstLane.transform.position = firstLanePos;
         lastLanePos = firstLanePos;
 
     }
 
     void Update()
     {
-        timer += Time.deltaTime;
-        if (timer >= spawnRate)
+        timerSpawnObstacle += Time.deltaTime;
+        timerSpawnLane += Time.deltaTime;
+        if (timerSpawnObstacle >= spawnObstacleRate)
         {
-            // if (sandLanePool.Count > 0)
-            // {
-            //     SpawnLane();
-            // }
-            SpawnLane();
             SpawnObstacle();
-            timer = 0f;
+            timerSpawnObstacle = 0f;
+        }
+        else if (timerSpawnLane >= spawnLaneRate)
+        {
+            SpawnLane();
+            timerSpawnLane = 0f;
+            
         }
     }
 
     void InitPool(Stack<GameObject> pool, GameObject prefab, int amount)
     {
+        GameObject obstacleParent = new GameObject("ParentObstacle 1");
+        obstacleParent.transform.position = Vector3.zero;
         for (int i = 0; i < amount; i++)
         {
-            GameObject obj = Instantiate(prefab, defaultSpawnPosition, Quaternion.identity);
+            GameObject obj = Instantiate(prefab, defaultSpawnPosition, Quaternion.identity, obstacleParent.transform);
             obj.SetActive(false);
             pool.Push(obj);
         }
@@ -72,10 +85,27 @@ public class SpawnerManager : Singleton<SpawnerManager>
 
     void SpawnLane()
     {
-        // GameObject lane = sandLanePool.Pop();
-        GameObject lane = Instantiate(sandLanePrefabs);
-        lastLanePos.z += 97.1593f;
-        lane.transform.position = new Vector3(firstLanePos.x, firstLanePos.y, lastLanePos.z);
+        GameObject lane;
+        if (!isLevelUp)
+        {
+            if (sandLanePool.Count > 0)
+            {
+                lane = sandLanePool.Pop();
+                lastLanePos.z += 97.1593f;
+                lane.transform.position = new Vector3(firstLanePos.x, firstLanePos.y, lastLanePos.z);
+            }
+        }
+        else
+        {
+            if (rockLanePool.Count > 0)
+            {
+                lane = rockLanePool.Pop();
+                lastLanePos.z += 97.1593f;
+                lane.transform.position = new Vector3(firstLanePos.x, firstLanePos.y, lastLanePos.z);
+            }
+        }
+        // GameObject lane = Instantiate(sandLanePrefabs);
+
     }
     void SpawnObstacle()
     {
@@ -85,11 +115,11 @@ public class SpawnerManager : Singleton<SpawnerManager>
         {
             case 0:
                 SpawnObstacleFromPool(smallObstaclePool,
-                new Vector3(Random.Range(-1, 2) * 2, 0, lastSpawnPosition.z + spawnZ));
+                new Vector3(Random.Range(-1, 2) , 0, lastSpawnPosition.z + spawnZ));
                 break;
             case 1:
                 SpawnObstacleFromPool(doubleObstaclePool,
-                new Vector3(Random.Range(0, 2) == 0 ? 1 : -1, 0, lastSpawnPosition.z + spawnZ));
+                new Vector3(Random.Range(0, 2) == 0 ? 0.6f: -0.6f, 0, lastSpawnPosition.z + spawnZ));
                 break;
             default:
                 SpawnObstacleFromPool(bigObstaclePool, new Vector3(0, 0, lastSpawnPosition.z + spawnZ));
@@ -99,8 +129,8 @@ public class SpawnerManager : Singleton<SpawnerManager>
 
     private void SpawnObstacleFromPool(Stack<GameObject> pool, Vector3 position)
     {
-        lastSpawnPosition = position;
         if (pool.Count == 0) return;
+        lastSpawnPosition = position;
         GameObject obstacle = pool.Pop();
         Obstacle script = obstacle.GetComponent<Obstacle>();
         script.SetHealth();
@@ -125,14 +155,16 @@ public class SpawnerManager : Singleton<SpawnerManager>
                 obstacle.transform.position = defaultSpawnPosition;
                 bigObstaclePool.Push(obstacle);
                 break;
-            // case "sandLane":
-            //     obstacle.transform.position = defaultSpawnPosition;
-            //     sandLanePool.Push(obstacle);
-            //     break;
-            // case "rockLane":
-            //     obstacle.transform.position = defaultSpawnPosition;
-            //     rockLanePool.Push(obstacle);
-            //     break;
+            case "sandLane":
+                GameObject parent = obstacle.gameObject.transform.parent.gameObject;
+                parent.transform.position = defaultSpawnPosition;
+                sandLanePool.Push(parent);
+                break;
+            case "rockLane":
+                GameObject gameObject = obstacle.gameObject.transform.parent.gameObject;
+                gameObject.transform.position = defaultSpawnPosition;
+                rockLanePool.Push(gameObject);
+                break;
             default:
                 Debug.LogWarning($"Unrecognized obstacle tag: {obstacle.tag}");
                 break;

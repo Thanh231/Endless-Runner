@@ -1,23 +1,17 @@
-using System;
 using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 
 public class Controller : MonoBehaviour
 {
-
-    [SerializeField]
-    float jumpSpace = 1f;
-    [SerializeField]
-    float animationExitTime = 0.6f;
-    [SerializeField]
-    GameObject gunObject;
-
-    [SerializeField]
-    Animator animCharacter;
+    [SerializeField] Player player;
+    public PlayerInput input; // gán từ Inspector
+    [SerializeField] float jumpSpace = 1f;
+    [SerializeField] float animationExitTime = 0.6f;
+    [SerializeField] GameObject gunObject;
+    [SerializeField] Animator animCharacter;
     private bool isJumping = false;
-    private float laneDistance = 3f;
-    private int currentLane = 1;
+    private float laneDistance = 1.1f;
+    private int currentLane = 1; // 0 = left, 1 = middle, 2 = right
     private int totalLanes = 3;
 
     public int maxAmmo = 6;
@@ -27,45 +21,61 @@ public class Controller : MonoBehaviour
     public float hitRange = 50f;
     public LayerMask hitLayer;
     public GameObject lineEffectPrefab;
+
     private void Start()
     {
         SetUpGunAndBullet();
     }
+
     void Update()
     {
-        if (Input.GetKeyDown(KeyCode.A) || Input.GetKeyDown(KeyCode.LeftArrow))
+        if (player == null || !player.isPlaying)
+            return; 
+
+        input.HandleTouchInput();
+        input.HandleKeyboardFallback();
+        MoveBehavior d = MoveDirectionSafe();
+
+        if (d == MoveBehavior.Left)
         {
             if (currentLane > 0)
                 currentLane--;
         }
-
-        if (Input.GetKeyDown(KeyCode.D) || Input.GetKeyDown(KeyCode.RightArrow))
+        else if (d == MoveBehavior.Right)
         {
             if (currentLane < totalLanes - 1)
                 currentLane++;
         }
-
-        Vector3 targetPos = new Vector3((currentLane - 1) * laneDistance, transform.position.y, transform.position.z);
-        transform.position = Vector3.Lerp(transform.position, targetPos, Time.deltaTime * 10f);
-
-        if (Input.GetKeyDown(KeyCode.Space) && !isJumping)
+        else if (d == MoveBehavior.Jump)
         {
-            ExecuteJumpAnimation();
+            if (!isJumping)
+                ExecuteJumpAnimation();
         }
-
-        if (Input.GetKeyDown(KeyCode.F) && !isJumping)
+        else if (d == MoveBehavior.Fire)
         {
-            if (currentAmmo > 0)
+            if (!isJumping && currentAmmo > 0)
             {
                 Shoot();
                 ExecuteFireAnimation();
             }
-
+            else if(currentAmmo <= 0)
+            {
+                Reload();
+            }
         }
-        if (Input.GetKeyDown(KeyCode.R))
+        else if (d == MoveBehavior.Reload)
         {
             Reload();
         }
+
+        Vector3 targetPos = new Vector3((currentLane - 1) * laneDistance, transform.position.y, transform.position.z);
+        transform.position = Vector3.Lerp(transform.position, targetPos, Time.deltaTime * 10f);
+    }
+
+    private MoveBehavior MoveDirectionSafe()
+    {
+        if (input == null) return MoveBehavior.None;
+        return input.GetAndClearDirection();
     }
 
     private void ExecuteFireAnimation()
@@ -87,16 +97,15 @@ public class Controller : MonoBehaviour
         currentAmmo = maxAmmo;
         EventManager.OnAmmoChanged?.Invoke(currentAmmo, maxAmmo);
         EventManager.OnReloaded?.Invoke();
-
+        AudioController.Ins.PlaySound(AudioController.Ins.reload, AudioController.Ins.sfxAus);
     }
 
     private void Shoot()
     {
         currentAmmo--;
         EventManager.OnAmmoChanged?.Invoke(currentAmmo, maxAmmo);
-        Vector3 end = firePoint.position + firePoint.forward * 50f;
+        AudioController.Ins.PlaySound(AudioController.Ins.bullet, AudioController.Ins.sfxAus);
         CheckHitRange();
-        ShowBulletLine(firePoint.position, end);
     }
 
     private void CheckHitRange()
@@ -106,24 +115,30 @@ public class Controller : MonoBehaviour
 
         if (Physics.Raycast(ray, out hit, hitRange, hitLayer))
         {
-            Debug.DrawLine(ray.origin, hit.point, Color.red, 1f);
-
+            ShowBulletLine(firePoint.position, hit.point);
             Obstacle obstacle = hit.collider.GetComponent<Obstacle>();
             if (obstacle != null)
             {
                 obstacle.TakeDamage();
             }
         }
+        else
+        {
+            Vector3 end = firePoint.position + firePoint.forward * 50f;
+            ShowBulletLine(firePoint.position, end);
+        }
     }
 
     private void ShowBulletLine(Vector3 start, Vector3 end)
     {
+        if (lineEffectPrefab == null) return;
         GameObject line = Instantiate(lineEffectPrefab);
         LineRenderer lr = line.GetComponent<LineRenderer>();
-
-        lr.SetPosition(0, start);
-        lr.SetPosition(1, end);
-
+        if (lr != null)
+        {
+            lr.SetPosition(0, start);
+            lr.SetPosition(1, end);
+        }
         Destroy(line, 0.1f);
     }
 
@@ -131,12 +146,20 @@ public class Controller : MonoBehaviour
     {
         yield return new WaitForSeconds(timeReset);
         animCharacter.SetBool(animString, false);
-        isJumping = false;
-        gunObject.SetActive(false);
+
+        if (animString == "Jump")
+        {
+            isJumping = false;
+        }
+
+        if (animString == "Fire")
+        {
+            gunObject.SetActive(false);
+        }
     }
     private void SetUpGunAndBullet()
     {
-        gunObject.SetActive(false);
+        if (gunObject != null) gunObject.SetActive(false);
         currentAmmo = maxAmmo;
         EventManager.OnAmmoChanged?.Invoke(currentAmmo, maxAmmo);
     }

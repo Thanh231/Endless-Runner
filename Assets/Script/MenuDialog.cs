@@ -1,10 +1,15 @@
+using System;
+using System.Collections;
 using TMPro;
 using UnityEngine;
 
 public class MenuDialog : MonoBehaviour
 {
+    public PlayerInput input;
     public TextMeshProUGUI titleDialogText;
     public TextMeshProUGUI buttonDialogText;
+
+    public GameObject tutorialDialog;
 
     public void DisplayDialog(string _titleDialogText, string _buttonDialogText)
     {
@@ -14,7 +19,13 @@ public class MenuDialog : MonoBehaviour
 
     public void OnClickBtn()
     {
-        GameManager.Ins.PlayGame();
+        tutorialDialog.SetActive(true);
         this.gameObject.SetActive(false);
+    }
+
+    public void StartGame()
+    {
+        tutorialDialog.SetActive(false);
+        GameManager.Ins.PlayGame();
     }
 }

@@ -4,7 +4,7 @@ public class Player : MonoBehaviour
 {
     public float speedTranslate = 5f;
     
-    private bool isPlaying = false;
+    public bool isPlaying = false;
 
     private void OnEnable()
     {

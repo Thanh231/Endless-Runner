@@ -24,6 +24,7 @@ public class Obstacle : MonoBehaviour
             if (healthSystem != null)
             {
                 healthSystem.TakeDamage(20);
+                AudioController.Ins.PlaySound(AudioController.Ins.lostLife, AudioController.Ins.sfxAus);
             }
             SpawnerManager.Ins.AddStack(this.gameObject);
         }

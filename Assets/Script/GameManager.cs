@@ -1,10 +1,12 @@
+using System.Collections;
 using UnityEngine;
 
 public enum GameState
 {
     Init,
-    Playing,
-    GameOver,
+    StartGame,
+    
+    PauseGame,
 }
 
 public class GameManager : Singleton<GameManager>
@@ -24,14 +26,20 @@ public class GameManager : Singleton<GameManager>
 
     void GameOver()
     {
-        currentState = GameState.GameOver;
+        currentState = GameState.PauseGame;
         UIManager.Ins.ShowGameOver();
     }
 
     public void PlayGame()
     {
-        currentState = GameState.Playing;
-        EventManager.OnStartGame?.Invoke();
         Time.timeScale = 1f;
+        StartCoroutine(DelayStartGame());
+    }
+
+    private IEnumerator DelayStartGame()
+    {
+        yield return new WaitForSeconds(1f);
+        currentState = GameState.StartGame;
+        EventManager.OnStartGame?.Invoke();
     }
 }

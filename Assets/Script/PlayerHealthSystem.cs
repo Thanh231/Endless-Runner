@@ -28,6 +28,7 @@ public class PlayerHealthSystem : MonoBehaviour
         if (currentHealth <= 0)
         {
             animator.SetBool("Game Over", true);
+            AudioController.Ins.PlaySound(AudioController.Ins.playerDeath, AudioController.Ins.sfxAus);
             EventManager.OnPlayerDied?.Invoke();
         }
     }

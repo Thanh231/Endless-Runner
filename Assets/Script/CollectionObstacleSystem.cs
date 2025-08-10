@@ -11,5 +11,9 @@ public class CollectionObstacleSystem : MonoBehaviour
         {
             SpawnerManager.Ins.AddStack(other.gameObject);
         }
+        // if (other.gameObject.layer == laneLayer)
+        // {
+        //     Debug.Log("Lane");
+        // }
     }
 }

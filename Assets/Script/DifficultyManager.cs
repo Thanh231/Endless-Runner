@@ -7,6 +7,7 @@ public class DifficultyManager : MonoBehaviour
     public Player player;
     public float timeToIncrease = 10f;
     public float speedIncrease = 1f;
+    public float maxSpeed = 11f;
     private float timer = 0f;
     [SerializeField] private TextMeshProUGUI speedText;
 
@@ -18,11 +19,15 @@ public class DifficultyManager : MonoBehaviour
     void Update()
     {
         timer += Time.deltaTime;
-        if (timer >= timeToIncrease)
+        if (timer >= timeToIncrease && player.speedTranslate <= maxSpeed)
         {
             player.speedTranslate += speedIncrease;
             UpdateSpeedText();
             timer = 0f;
+        }
+        if (player.speedTranslate == 11f)
+        {
+            SpawnerManager.Ins.isLevelUp = true;
         }
     }
 
