@@ -9,8 +9,8 @@ public class DistanceScore : MonoBehaviour
     public GameObject highScoreGO;
 
     private Vector3 startPos;
-    public float score;
-    public float highScore;
+    private float score;
+    private float highScore;
 
     void Start()
     {
