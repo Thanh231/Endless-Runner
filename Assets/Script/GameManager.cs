@@ -36,7 +36,7 @@ public class GameManager : Singleton<GameManager>
     void PlayerDied()
     {
         currentState = GameState.PauseGame;
-        UIManager.Ins.ShowGameOver();
+        UIManager.Ins.ShowRetryUI();
     }
 
     public void PlayGame()

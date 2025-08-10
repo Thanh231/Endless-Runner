@@ -35,5 +35,5 @@ public class EventManager : Singleton<EventManager>
     /// Triggered when the player reloads their weapon.
     /// </summary>
     public static Action OnReloaded;
-    public static Action<string> ShowUI;
+    public static Action<bool> ShowHighScore;
 }

@@ -7,14 +7,14 @@ public class DifficultyManager : MonoBehaviour
     public Player player;
     public float timeToIncrease = 10f;
     public float speedIncrease = 1f;
-    public float currentSpeed = 1f;
+    public float defaultSpeed = 5f;
     public float maxSpeed = 11f;
     private float timer = 0f;
 
     private void Start()
     {
         // UpdateSpeedText();
-        currentSpeed = speedIncrease;
+        defaultSpeed = player.speedTranslate;
     }
     private void OnEnable()
     {
@@ -38,7 +38,6 @@ public class DifficultyManager : MonoBehaviour
 
     public void OnResetGame()
     {
-        currentSpeed = speedIncrease;
-        player.speedTranslate = speedIncrease;
+        player.speedTranslate = defaultSpeed;
     }
 }

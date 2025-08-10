@@ -12,7 +12,7 @@ public enum MoveBehavior
 
 public class PlayerInput : MonoBehaviour
 {
-    public Vector2 startTouch = Vector2.zero;
+    private Vector2 startTouch = Vector2.zero;
     private Vector2 deltaMove = Vector2.zero;
     private bool isTouching = false;
     public float swipeThreshold = 30f;

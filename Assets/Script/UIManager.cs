@@ -9,7 +9,7 @@ public class UIManager : Singleton<UIManager>
     public GameObject dialog;
     public Slider HPSlider;
     public TextMeshProUGUI bullAmountText;
-
+    
     private void OnEnable()
     {
         EventManager.OnHealthChanged += UpdateHealth;
@@ -35,19 +35,24 @@ public class UIManager : Singleton<UIManager>
     {
         if (dialog != null)
         {
-            dialog?.GetComponent<MenuDialog>().DisplayDialog("ENDLESS RUNNER", "PLAY GAME");
+            dialog?.GetComponent<MenuDialog>().DisplayDialog("ENDLESS RUNNER", "PLAY GAME",false);
             dialog.SetActive(true);
         }
     }
-    public void ShowGameOver()
+    public void ShowRetryUI()
     {
-        StartCoroutine(DelayDisplayGameOverDialog());
+        StartCoroutine(DelayDisplayGameOverDialog("YOU DIED", "RETRY"));
     }
 
-    IEnumerator DelayDisplayGameOverDialog()
+    public void ShowGameOver()
+    {
+        StartCoroutine(DelayDisplayGameOverDialog("YOU LOSE", "RESTART",true));
+    }
+
+    IEnumerator DelayDisplayGameOverDialog(string title,string buttonText,bool isShow = false)
     {
         yield return new WaitForSeconds(1f);
-        dialog?.GetComponent<MenuDialog>().DisplayDialog("YOU DIED", "RETRY");
+        dialog?.GetComponent<MenuDialog>().DisplayDialog(title,buttonText,isShow);
         dialog?.SetActive(true);
         Time.timeScale = 0f;
     }

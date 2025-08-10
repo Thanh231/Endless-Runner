@@ -6,6 +6,7 @@ public class DistanceScore : MonoBehaviour
     public Transform player;
     public TextMeshProUGUI scoreText;
     public TextMeshProUGUI highScoreText;
+    public GameObject highScoreGO;
 
     private Vector3 startPos;
     private float score;
@@ -19,7 +20,9 @@ public class DistanceScore : MonoBehaviour
         highScore = PlayerPrefs.GetFloat("HighScore", 0);
 
         if (highScoreText != null)
-            highScoreText.text = "High Score: " + Mathf.FloorToInt(highScore);
+            highScoreText.text = "High Score: " + Mathf.FloorToInt(highScore) + "m";
+
+        EventManager.ShowHighScore += ShowHigScore;
     }
 
     void Update()
@@ -30,21 +33,28 @@ public class DistanceScore : MonoBehaviour
             score = Mathf.Max(0, score);
 
             if (scoreText != null)
-                scoreText.text = "Score: " + Mathf.FloorToInt(score);
+                scoreText.text = "Score: " + Mathf.FloorToInt(score) +"m";
         }
     }
 
-    public void ShowHigScore()
+    public void ShowHigScore(bool isShow = false)
     {
-        
         if (score > highScore)
         {
             highScore = score;
             PlayerPrefs.SetFloat("HighScore", highScore);
             PlayerPrefs.Save();
+        }
 
+        if (isShow)
+        {
+            highScoreGO.SetActive(true);
             if (highScoreText != null)
-            highScoreText.text = "High Score: " + Mathf.FloorToInt(highScore);
+                highScoreText.text = "High Score: " + Mathf.FloorToInt(highScore) + "m";
+        }
+        else
+        {
+            highScoreGO.SetActive(false);
         }
     }
 }
