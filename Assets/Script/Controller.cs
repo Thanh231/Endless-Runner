@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using UnityEngine;
 
@@ -27,10 +28,27 @@ public class Controller : MonoBehaviour
         SetUpGunAndBullet();
     }
 
+    private void OnEnable()
+    {
+        EventManager.OnGameOver += ResetGame;
+    }
+
+    private void ResetGame()
+    {
+        currentAmmo = maxAmmo;
+        currentLane = 1;
+        EventManager.OnAmmoChanged?.Invoke(currentAmmo, maxAmmo);
+    }
+
+    private void OnDisable()
+    {
+        EventManager.OnGameOver -= ResetGame;
+    }
+
     void Update()
     {
         if (player == null || !player.isPlaying)
-            return; 
+            return;
 
         input.HandleTouchInput();
         input.HandleKeyboardFallback();
@@ -58,7 +76,7 @@ public class Controller : MonoBehaviour
                 Shoot();
                 ExecuteFireAnimation();
             }
-            else if(currentAmmo <= 0)
+            else if (currentAmmo <= 0)
             {
                 Reload();
             }
