@@ -1,4 +1,4 @@
-using System.Collections;
+
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -104,11 +104,11 @@ public class SpawnerManager : Singleton<SpawnerManager>
         {
             SpawnLane();
             timerSpawnLane = 0f;
-            
+
         }
     }
 
-    void InitPool(Stack<GameObject> pool, GameObject prefab, int amount,string gameObjectName)
+    void InitPool(Stack<GameObject> pool, GameObject prefab, int amount, string gameObjectName)
     {
         GameObject obstacleParent = new GameObject(gameObjectName);
         obstacleParent.transform.position = Vector3.zero;
@@ -118,7 +118,7 @@ public class SpawnerManager : Singleton<SpawnerManager>
             obj.SetActive(false);
             pool.Push(obj);
         }
-    }   
+    }
 
     void SpawnLane()
     {
@@ -150,11 +150,11 @@ public class SpawnerManager : Singleton<SpawnerManager>
         {
             case 0:
                 SpawnObstacleFromPool(smallObstaclePool,
-                new Vector3(Random.Range(-1, 2) , 0, lastSpawnPosition.z + spawnZ));
+                new Vector3(Random.Range(-1, 2), 0, lastSpawnPosition.z + spawnZ));
                 break;
             case 1:
                 SpawnObstacleFromPool(doubleObstaclePool,
-                new Vector3(Random.Range(0, 2) == 0 ? 0.6f: -0.6f, 0, lastSpawnPosition.z + spawnZ));
+                new Vector3(Random.Range(0, 2) == 0 ? 0.6f : -0.6f, 0, lastSpawnPosition.z + spawnZ));
                 break;
             default:
                 SpawnObstacleFromPool(bigObstaclePool, new Vector3(0, 0, lastSpawnPosition.z + spawnZ));

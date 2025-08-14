@@ -1,5 +1,4 @@
-using System.Collections;
-using System.Collections.Generic;
+
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -32,7 +31,7 @@ public class Obstacle : MonoBehaviour
 
     private void UpdateHealth(int currentHealth, int maxHealth)
     {
-        HPSlider.value = currentHealth/(float)maxHealth;
+        HPSlider.value = currentHealth / (float)maxHealth;
     }
 
     public void TakeDamage()
@@ -43,5 +42,5 @@ public class Obstacle : MonoBehaviour
         {
             SpawnerManager.Ins.AddStack(this.gameObject);
         }
-    } 
+    }
 }

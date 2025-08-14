@@ -1,4 +1,4 @@
-using System;
+
 using System.Collections;
 using UnityEngine;
 
@@ -18,7 +18,6 @@ public class GameManager : Singleton<GameManager>
     {
         currentState = GameState.Init;
         Time.timeScale = 0f;
-        EventManager.OnPlayerDied += PlayerDied;
         EventManager.OnGameOver += ResetGame;
     }
 
@@ -30,13 +29,7 @@ public class GameManager : Singleton<GameManager>
 
     private void OnDisable()
     {
-        EventManager.OnPlayerDied -= PlayerDied;
-    }
-
-    void PlayerDied()
-    {
-        currentState = GameState.PauseGame;
-        UIManager.Ins.ShowRetryUI();
+        EventManager.OnGameOver -= ResetGame;
     }
 
     public void PlayGame()

@@ -1,5 +1,4 @@
-using System;
-using System.Collections;
+
 using TMPro;
 using UnityEngine;
 
@@ -9,25 +8,37 @@ public class MenuDialog : MonoBehaviour
     public TextMeshProUGUI titleDialogText;
     public TextMeshProUGUI buttonDialogText;
 
-    public GameObject tutorialDialog;
+    public GameObject tutorialDialogDesktop;
+    public GameObject tutorialDialogMobile;
 
-    public void DisplayDialog(string _titleDialogText, string _buttonDialogText,bool isShowHighScore)
+    public void DisplayDialog(string _titleDialogText, string _buttonDialogText, bool isShowHighScore)
     {
         titleDialogText.text = _titleDialogText;
         buttonDialogText.text = _buttonDialogText;
-        EventManager.ShowHighScore?.Invoke(isShowHighScore);
+        EventManager.ShowHighScore?.Invoke();
     }
 
     public void OnClickBtn()
     {
-        tutorialDialog.SetActive(true);
+        // tutorialDialog.SetActive(true);
+        if (Application.platform == RuntimePlatform.Android || Application.platform == RuntimePlatform.IPhonePlayer)
+        {
+            tutorialDialogMobile.SetActive(true);
+        }
+        else if (Application.platform == RuntimePlatform.WindowsPlayer || Application.platform == RuntimePlatform.WindowsEditor)
+        {
+            tutorialDialogDesktop.SetActive(true);
+        }
+
+        EventManager.TurnOffHighScore?.Invoke();
         this.gameObject.SetActive(false);
-        EventManager.ShowHighScore?.Invoke(false);
     }
 
     public void StartGame()
     {
-        tutorialDialog.SetActive(false);
+        tutorialDialogDesktop.SetActive(false);
+        tutorialDialogMobile.SetActive(false);
+        // tutorialDialog.SetActive(false);
         GameManager.Ins.PlayGame();
     }
 }

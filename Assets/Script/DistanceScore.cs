@@ -1,5 +1,6 @@
 using UnityEngine;
 using TMPro;
+using System;
 
 public class DistanceScore : MonoBehaviour
 {
@@ -7,6 +8,7 @@ public class DistanceScore : MonoBehaviour
     public TextMeshProUGUI scoreText;
     public TextMeshProUGUI highScoreText;
     public GameObject highScoreGO;
+    public GameObject newHighScoreGO;
 
     private Vector3 startPos;
     private float score;
@@ -14,7 +16,6 @@ public class DistanceScore : MonoBehaviour
 
     void Start()
     {
-        PlayerPrefs.SetFloat("HighScore", 0);
         if (player != null)
             startPos = player.position;
 
@@ -24,6 +25,13 @@ public class DistanceScore : MonoBehaviour
             highScoreText.text = "High Score: " + Mathf.FloorToInt(highScore) + "m";
 
         EventManager.ShowHighScore += ShowHighScore;
+        EventManager.TurnOffHighScore += TurnOffHighScore;
+    }
+
+    private void TurnOffHighScore()
+    {
+        newHighScoreGO.SetActive(false);
+        highScoreGO.SetActive(false);
     }
 
     void Update()
@@ -38,25 +46,18 @@ public class DistanceScore : MonoBehaviour
         }
     }
 
-    public void ShowHighScore(bool isShow = false)
+    public void ShowHighScore()
     {
         if (score > highScore)
         {
             highScore = score;
             PlayerPrefs.SetFloat("HighScore", highScore);
             PlayerPrefs.Save();
+            newHighScoreGO.SetActive(true);
         }
 
-
-        if (isShow)
-        {
-            highScoreGO.SetActive(true);
-            if (highScoreText != null)
-                highScoreText.text = "High Score: " + Mathf.FloorToInt(highScore) + "m";
-        }
-        else
-        {
-            highScoreGO.SetActive(false);
-        }
+        highScoreGO.SetActive(true);
+        if (highScoreText != null)
+            highScoreText.text = "High Score: " + Mathf.FloorToInt(highScore) + "m";
     }
 }

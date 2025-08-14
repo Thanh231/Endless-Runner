@@ -16,12 +16,13 @@ public class EventManager : Singleton<EventManager>
     /// <summary>
     /// Triggered when the player dies (e.g., health reaches 0).
     /// </summary>
-    public static Action OnPlayerDied;
+    // public static Action OnPlayerDied;
 
     /// <summary>
     /// Triggered when the player dies (e.g., health reaches 0).
     /// </summary>
     public static Action OnGameOver;
+    public static Action OnStopGame;
 
     /// <summary>
     /// Triggered when the player's ammo changes.
@@ -35,5 +36,6 @@ public class EventManager : Singleton<EventManager>
     /// Triggered when the player reloads their weapon.
     /// </summary>
     public static Action OnReloaded;
-    public static Action<bool> ShowHighScore;
+    public static Action ShowHighScore;
+    public static Action TurnOffHighScore;
 }

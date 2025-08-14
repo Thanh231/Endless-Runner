@@ -1,6 +1,4 @@
 using System.Collections;
-using System.Collections.Generic;
-using TMPro;
 using UnityEngine;
 
 public class PlayerHealthSystem : MonoBehaviour
@@ -9,23 +7,16 @@ public class PlayerHealthSystem : MonoBehaviour
     public int maxHealth = 100;
     public Animator animator;
     private int currentHealth;
-    public int currentLive;
-    public int maxLive = 3;
-    public GameObject liveUI;
-    public TextMeshProUGUI liveText;
 
     public DistanceScore score;
     private void OnEnable()
     {
         EventManager.OnStartGame += SetHPBar;
-        currentLive = maxLive;
         SetHPBar();
     }
 
     private void SetHPBar()
     {
-        liveUI.SetActive(true);
-        liveText.text = "Live:" + currentLive.ToString();
         animator.SetBool("Game Over", false);
         currentHealth = maxHealth;
         EventManager.OnHealthChanged?.Invoke(currentHealth, maxHealth);
@@ -39,21 +30,16 @@ public class PlayerHealthSystem : MonoBehaviour
         if (currentHealth <= 0)
         {
             animator.SetBool("Game Over", true);
-            AudioController.Ins.PlaySound(AudioController.Ins.playerDeath, AudioController.Ins.sfxAus);
-            currentLive--;
-            if (currentLive > 0)
-            {
-                EventManager.OnPlayerDied?.Invoke();
-
-            }
-            else
-            {
-                currentLive = maxLive;
-                EventManager.OnGameOver?.Invoke();
-            }
-            liveUI.SetActive(false);
-
+            StartCoroutine(WaitDeathAnimComplete());
+            EventManager.OnStopGame?.Invoke();
         }
     }
 
+    IEnumerator WaitDeathAnimComplete()
+    {
+        yield return new WaitForSeconds(1f);
+        AudioController.Ins.PlaySound(AudioController.Ins.playerDeath, AudioController.Ins.sfxAus);
+        EventManager.OnGameOver?.Invoke();
+        Time.timeScale = 0f;
+    }
 }
